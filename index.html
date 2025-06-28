@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DealHut - Smart Picks</title>
+  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="DealHut - Smart Picks for the Best Deals, Daily!">
+<meta name="keywords" content="online shopping, best deals, products, electronics, clothing">
+<meta name="author" content="DealHut">
+<meta name="robots" content="index, follow">
+<title>DealHut - Smart Picks</title>
+</head>
+<body>
+  <header>
+    <img src="Purple Lavender Simple Illustrative Online Shop Logo.png" alt="Deal Hut Logo" class="logo" />
+    <h1>DealHut</h1>
+    <p>Smart Picks. Best Deals, Every Day!</p>
+  </header>
+
+  <main id="product-list"></main>
+
+  <footer>
+    <p>© 2025 DealHut | All Rights Reserved</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdPQohQQvsnuVS42XnxjyM4YuEFpHCmUE",
+      authDomain: "dealhut-4a83b.firebaseapp.com",
+      databaseURL: "https://dealhut-4a83b-default-rtdb.firebaseio.com/",
+      projectId: "dealhut-4a83b",
+      storageBucket: "dealhut-4a83b.appspot.com",
+      messagingSenderId: "453329860634",
+      appId: "1:453329860634:web:27fae9bf500f0e07d7b9a3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const productList = document.getElementById("product-list");
+
+    const productsRef = ref(db, "products");
+    onValue(productsRef, (snapshot) => {
+      const productsByCategory = {};
+
+      snapshot.forEach(child => {
+        const p = child.val();
+        const category = p.category;
+
+        if (!productsByCategory[category]) {
+          productsByCategory[category] = [];
+        }
+
+        productsByCategory[category].push(p);
+      });
+
+      productList.innerHTML = "";
+
+      Object.keys(productsByCategory).forEach(category => {
+        const categorySection = document.createElement("section");
+        categorySection.className = "category-section";
+        categorySection.innerHTML = `<h2>${category}</h2>`;
+
+        const productGrid = document.createElement("div");
+        productGrid.className = "product-grid";
+
+        productsByCategory[category].forEach(p => {
+          const card = document.createElement("div");
+          card.className = "product-card";
+          card.innerHTML = `
+            <a href="${p.link}" target="_blank" class="card-link">
+              <img src="${p.image}" alt="${p.name}">
+              <div class="card-content">
+                <h3>${p.name}</h3>
+                <p>${p.description}</p>
+              </div>
+            </a>
+          `;
+          productGrid.appendChild(card);
+        });
+
+        categorySection.appendChild(productGrid);
+        productList.appendChild(categorySection);
+      });
+    });
+  </script>
+
+  <!-- Optional: secret admin shortcut -->
+  <script>
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "A") {
+        window.location.href = "admin.html";
+      }
+    });
+  </script>
+</body>
+</html>

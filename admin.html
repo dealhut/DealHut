@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - DealHut</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>DealHut Admin</h1>
+  </header>
+
+  <section>
+    <h2>Add Product</h2>
+    <form id="product-form">
+      <input type="text" id="name" placeholder="Product Name" required />
+      <textarea id="description" placeholder="Description" required></textarea>
+      <input type="url" id="image" placeholder="Image URL" required />
+      <input type="url" id="link" placeholder="Buy Link" required />
+      <label for="category">Category</label>
+      <select id="category" required>
+        <option value="Electronics">Electronics</option>
+        <option value="Clothing">Clothing</option>
+        <option value="Home Goods">Home Goods</option>
+        <option value="Sports">Sports</option>
+      </select>
+      <button type="submit">Add Product</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>Admin Access © 2025 DealHut</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdPQohQQvsnuVS42XnxjyM4YuEFpHCmUE",
+      authDomain: "dealhut-4a83b.firebaseapp.com",
+      databaseURL: "https://dealhut-4a83b-default-rtdb.firebaseio.com/",
+      projectId: "dealhut-4a83b",
+      storageBucket: "dealhut-4a83b.appspot.com",
+      messagingSenderId: "453329860634",
+      appId: "1:453329860634:web:27fae9bf500f0e07d7b9a3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    document.getElementById("product-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const description = document.getElementById("description").value;
+      const image = document.getElementById("image").value;
+      const link = document.getElementById("link").value;
+      const category = document.getElementById("category").value;
+
+      push(ref(db, "products"), { name, description, image, link, category })
+        .then(() => {
+          alert("Product added successfully!");
+          e.target.reset();
+        })
+        .catch((error) => alert("Error: " + error.message));
+    });
+  </script>
+</body>
+</html>
